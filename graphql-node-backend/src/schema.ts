@@ -1,0 +1,68 @@
+import { gql } from 'apollo-server-express';
+import { User, Post, Comment } from './models';
+import Book from './models/Book';
+
+export const typeDefs = gql`
+  type User {
+    id: ID!
+    name: String!
+    email: String!
+    password: String!
+    posts: [Post!]
+    comments: [Comment!]
+  }
+
+  type Post {
+    id: ID!
+    title: String!
+    content: String!
+    createdAt: String!
+    user: User!
+    comments: [Comment!]
+  }
+
+  type Comment {
+    id: ID!
+    text: String!
+    createdAt: String!
+    user: User!
+    post: Post!
+  }
+
+  type Book {
+    id: ID!
+    title: String!
+    author: String!
+  }
+
+  type Query {
+    users: [User!]
+    posts: [Post!]
+    comments: [Comment!]
+    books: [Book!]
+  }
+`;
+
+export const resolvers = {
+  Query: {
+    users: async () =>
+      await User.findAll({ include: [{ model: Post, as: 'posts' }, { model: Comment, as: 'comments' }] }),
+    posts: async () =>
+      await Post.findAll({ include: [{ model: User, as: 'user' }, { model: Comment, as: 'comments' }] }),
+    comments: async () =>
+      await Comment.findAll({ include: [{ model: User, as: 'user' }, { model: Post, as: 'post' }] }),
+    books: async () => await Book.findAll()
+  },
+  User: {
+    posts: async (parent) => await Post.findAll({ where: { userId: parent.id } }),
+    comments: async (parent) => await Comment.findAll({ where: { userId: parent.id } })
+  },
+  Post: {
+    user: async (parent) => await User.findByPk(parent.userId),
+    comments: async (parent) => await Comment.findAll({ where: { postId: parent.id } })
+  },
+  Comment: {
+    user: async (parent) => await User.findByPk(parent.userId),
+    post: async (parent) => await Post.findByPk(parent.postId)
+  }
+};

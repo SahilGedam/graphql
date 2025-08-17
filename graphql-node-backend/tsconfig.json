@@ -1,0 +1,26 @@
+{
+  "compilerOptions": {
+    /* Basic Options */
+    "target": "ES2020",                          /* Output modern JS for Node 14+ */
+    "module": "commonjs",                        /* Node's module system */
+    "rootDir": "./src",                          /* Source code folder */
+    "outDir": "./dist",                          /* Compiled JS output folder */
+
+    /* Module Resolution */
+    "esModuleInterop": true,                     /* Allow default imports from CommonJS */
+    "allowSyntheticDefaultImports": true,        /* Makes default imports possible */
+    "moduleResolution": "node",                  /* Node.js style resolution */
+    "resolveJsonModule": true,                   /* Import .json files */
+    "types": ["node"],                           /* Include Node.js type definitions */
+
+    /* Source Maps */
+    "sourceMap": true,                           /* Generate .map files for debugging */
+
+    /* Code Quality */
+    "strict": false,                             /* Non-strict mode as you requested */
+    "skipLibCheck": true,                        /* Skip checking .d.ts files for speed */
+    "forceConsistentCasingInFileNames": true     /* File name case consistency */
+  },
+  "include": ["src", "src/seed.ts"],                            /* Compile everything inside src/ */
+  "exclude": ["node_modules", "dist"]            /* Ignore output and dependencies */
+}
