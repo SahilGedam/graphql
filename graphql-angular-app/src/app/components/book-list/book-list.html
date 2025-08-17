@@ -1,0 +1,24 @@
+<div class="container mt-4">
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h3 class="mb-0">📚 Book List</h3>
+    <button class="btn btn-success" (click)="goToAdd()">➕ Add Book</button>
+  </div>
+
+  @if (books.length > 0) {
+    <ul class="list-group">
+      @for (book of books; track book.id) {
+        <li class="list-group-item d-flex justify-content-between align-items-center">
+          <div>
+            <strong>{{ book.title }}</strong> by {{ book.author }}
+          </div>
+          <div>
+            <button class="btn btn-sm btn-primary me-2" (click)="goToEdit(book)">🖊️ Edit</button>
+            <button class="btn btn-sm btn-danger" (click)="deleteBook(book.id)">🗑️ Delete</button>
+          </div>
+        </li>
+      }
+    </ul>
+  } @else {
+    <div class="alert alert-warning mt-3">No books found.</div>
+  }
+</div>

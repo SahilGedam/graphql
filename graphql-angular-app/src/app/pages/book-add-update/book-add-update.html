@@ -1,0 +1,22 @@
+<div class="container mt-4">
+  <h2 *ngIf="!isEditMode">Add New Book</h2>
+  <h2 *ngIf="isEditMode">Edit Book</h2>
+
+  <form [formGroup]="bookForm" (ngSubmit)="onSubmit()">
+    <div class="mb-3">
+      <label for="title" class="form-label">Title</label>
+      <input id="title" type="text" class="form-control" formControlName="title" />
+    </div>
+
+    <div class="mb-3">
+      <label for="author" class="form-label">Author</label>
+      <input id="author" type="text" class="form-control" formControlName="author" />
+    </div>
+
+    <button type="submit" class="btn btn-primary" [disabled]="bookForm.invalid">
+      {{ isEditMode ? 'Update' : 'Create' }}
+    </button>
+
+    <button type="button" class="btn btn-secondary ms-2" (click)="goBack()">Back</button>
+  </form>
+</div>

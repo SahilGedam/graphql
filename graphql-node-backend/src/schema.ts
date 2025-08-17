@@ -40,27 +40,78 @@ export const typeDefs = gql`
     posts: [Post!]
     comments: [Comment!]
     books: [Book!]
+    book(id: ID!): Book 
+  }
+
+  type Mutation {
+    createBook(title: String!, author: String!): Book!
+    updateBook(id: ID!, title: String!, author: String!): Book!
+    deleteBook(id: ID!): Boolean!
   }
 `;
 
 export const resolvers = {
   Query: {
     users: async () =>
-      await User.findAll({ include: [{ model: Post, as: 'posts' }, { model: Comment, as: 'comments' }] }),
+      await User.findAll({
+        include: [
+          { model: Post, as: 'posts' },
+          { model: Comment, as: 'comments' }
+        ]
+      }),
     posts: async () =>
-      await Post.findAll({ include: [{ model: User, as: 'user' }, { model: Comment, as: 'comments' }] }),
+      await Post.findAll({
+        include: [
+          { model: User, as: 'user' },
+          { model: Comment, as: 'comments' }
+        ]
+      }),
     comments: async () =>
-      await Comment.findAll({ include: [{ model: User, as: 'user' }, { model: Post, as: 'post' }] }),
-    books: async () => await Book.findAll()
+      await Comment.findAll({
+        include: [
+          { model: User, as: 'user' },
+          { model: Post, as: 'post' }
+        ]
+      }),
+    books: async () => await Book.findAll(),
+    book: async (_: any, { id }: { id: number }) => {
+      return await Book.findByPk(id);
+    }
   },
+
+  Mutation: {
+    createBook: async (_: any, { title, author }: { title: string; author: string }) => {
+      return await Book.create({ title, author });
+    },
+    updateBook: async (_: any, { id, title, author }: { id: number; title: string; author: string }) => {
+      const book = await Book.findByPk(id);
+      if (!book) throw new Error('Book not found');
+      book.title = title;
+      book.author = author;
+      await book.save();
+      return book;
+    },
+    deleteBook: async (_: any, { id }: { id: number }) => {
+      const book = await Book.findByPk(id);
+      if (!book) return false;
+      await book.destroy();
+      return true;
+    }
+  },
+
   User: {
-    posts: async (parent) => await Post.findAll({ where: { userId: parent.id } }),
-    comments: async (parent) => await Comment.findAll({ where: { userId: parent.id } })
+    posts: async (parent) =>
+      await Post.findAll({ where: { userId: parent.id } }),
+    comments: async (parent) =>
+      await Comment.findAll({ where: { userId: parent.id } })
   },
+
   Post: {
     user: async (parent) => await User.findByPk(parent.userId),
-    comments: async (parent) => await Comment.findAll({ where: { postId: parent.id } })
+    comments: async (parent) =>
+      await Comment.findAll({ where: { postId: parent.id } })
   },
+
   Comment: {
     user: async (parent) => await User.findByPk(parent.userId),
     post: async (parent) => await Post.findByPk(parent.postId)
