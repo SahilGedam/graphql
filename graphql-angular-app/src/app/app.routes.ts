@@ -9,24 +9,24 @@ export const routes: Routes = [
   // { path: 'books/add', component: BookAddUpdate },
   // { path: 'books/edit/:id', component: BookAddUpdate },
 
-
-  { path: '', component: PostList },
-  { path: 'posts/:id', loadComponent: () => import('./components/post-detail/post-detail').then(m => m.PostDetail) },
-
-
+{ path: '', component: PostList },
   {
     path: 'posts/add',
     loadComponent: () =>
-      import('./components/post-add-update/post-add-update').then(
-        (m) => m.PostAddUpdate
-      ),
+      import('./components/post-add-update/post-add-update').then(m => m.PostAddUpdate)
   },
   {
     path: 'posts/edit/:id',
     loadComponent: () =>
-      import('./components/post-add-update/post-add-update').then(
-        (m) => m.PostAddUpdate
-      ),
-    data: { isEdit: true },
+      import('./components/post-add-update/post-add-update').then(m => m.PostAddUpdate)
   },
+
+  // Dynamic Post detail route at the end
+  {
+    path: 'posts/:id',
+    loadComponent: () =>
+      import('./components/post-detail/post-detail').then(m => m.PostDetail)
+  },
+
+
 ];

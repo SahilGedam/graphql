@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { PostService } from '../../services/post';
 
 @Component({
@@ -12,9 +12,11 @@ import { PostService } from '../../services/post';
 export class PostDetail implements OnInit {
   post: any;
 
-  constructor(private route: ActivatedRoute, private postService: PostService) {}
+  constructor(private route: ActivatedRoute, private postService: PostService, private router: Router,) { }
 
   ngOnInit(): void {
+    console.log('called PostDetail component');
+
     this.fetchPostDetails();
   }
 
@@ -25,5 +27,8 @@ export class PostDetail implements OnInit {
         this.post = post;
       });
     }
+  }
+  goBack() {
+    this.router.navigate(['/']);
   }
 }

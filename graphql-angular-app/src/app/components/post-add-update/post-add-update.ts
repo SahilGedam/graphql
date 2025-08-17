@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
-import { Component, Input } from '@angular/core';
-import { ReactiveFormsModule, FormGroup, FormBuilder, Validators } from '@angular/forms';
-import { Router, ActivatedRoute } from '@angular/router';
+import { Component } from '@angular/core';
+import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { ActivatedRoute, Router } from '@angular/router';
 import { PostService } from '../../services/post';
 
 @Component({
@@ -11,62 +11,70 @@ import { PostService } from '../../services/post';
   styleUrl: './post-add-update.css'
 })
 export class PostAddUpdate {
-  postForm!: FormGroup;
-  @Input() isEditMode: boolean = false;
-  @Input() postId?: string;
+ postForm!: FormGroup;
+  isEditMode = false;
+  postId?: string;
 
   constructor(
     private fb: FormBuilder,
-    private router: Router,
     private route: ActivatedRoute,
+    private router: Router,
     private postService: PostService
   ) {
     this.initForm();
+
+    this.route.params.subscribe((params) => {
+      if (params['id']) {
+        this.isEditMode = true;
+        this.postId = params['id'];
+        this.loadPost();
+      }
+    });
   }
 
-  initForm(): void {
+  get pageTitle() {
+    return this.isEditMode ? '✏️ Edit Post' : '➕ Add Post';
+  }
+
+  initForm() {
     this.postForm = this.fb.group({
       title: ['', Validators.required],
       content: ['', Validators.required],
-    });
-
-    if (this.isEditMode && this.postId) {
-      this.loadPostData();
-    }
-  }
-
-  loadPostData(): void {
-    this.postService.getPostById(this.postId!).subscribe({
-      next: (post) => {
-        this.postForm.patchValue({
-          title: post.title,
-          content: post.content,
-        });
-      },
-      error: (err) => console.error('Error loading post:', err),
+      userId: [1, Validators.required], // default user
     });
   }
 
-  onSubmit(): void {
+  loadPost() {
+    if (!this.postId) return;
+    this.postService.getPostById(this.postId).subscribe({
+      next: (post) => this.postForm.patchValue({
+        title: post.title,
+        content: post.content,
+        userId: post.user.id
+      }),
+      error: (err) => console.error(err)
+    });
+  }
+
+  onSubmit() {
     if (this.postForm.invalid) return;
 
-    const { title, content } = this.postForm.value;
+    const { title, content, userId } = this.postForm.value;
 
     if (this.isEditMode && this.postId) {
       this.postService.updatePost(this.postId, title, content).subscribe({
-        next: () => this.goBack(),
-        error: (err) => console.error('Error updating post:', err),
+        next: () => this.router.navigate(['/']),
+        error: (err) => console.error(err)
       });
     } else {
-      const userId = 1; // 🔁 hardcoded for now — later you may fetch from login
       this.postService.createPost(title, content, userId).subscribe({
-        next: () => this.goBack(),
-        error: (err) => console.error('Error creating post:', err),
+        next: () => this.router.navigate(['/']),
+        error: (err) => console.error(err)
       });
     }
   }
 
-  goBack(): void {
-    this.router.navigate(['/posts']);
+  goBack() {
+    this.router.navigate(['/']);
   }
 }

@@ -8,11 +8,12 @@
   <h5>Comments</h5>
   <ul class="list-group">
     @for (comment of post.comments; track comment.id) {
-      <li class="list-group-item">
-        <strong>{{ comment.user.name }}</strong>: {{ comment.text }}
-        <br />
-        <small class="text-muted">{{ comment.createdAt }}</small>
-      </li>
+    <li class="list-group-item">
+      <strong>{{ comment.user.name }}</strong>: {{ comment.text }}
+      <br />
+      <small class="text-muted">{{ comment.createdAt }}</small>
+    </li>
     }
   </ul>
+  <button class="btn btn-secondary ms-2 mt-2" type="button" (click)="goBack()">Back</button>
 </div>
