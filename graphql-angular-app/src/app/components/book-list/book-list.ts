@@ -21,6 +21,7 @@ export class BookList implements OnInit {
   getBooks(): void {
     this.bookService.getBooks().subscribe((data) => {
       console.log('✅ BookService called');
+      console.trace()
       this.books = data;
     });
   }

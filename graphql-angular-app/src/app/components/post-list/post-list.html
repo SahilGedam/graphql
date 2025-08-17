@@ -1,0 +1,29 @@
+<div class="container mt-4">
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h3 class="mb-0">📝 Posts</h3>
+    <button class="btn btn-success" (click)="goToAdd()">➕ Add Post</button>
+  </div>
+
+  @if (posts.length > 0) {
+    <ul class="list-group mt-3">
+      @for (post of posts; track post.id) {
+        <li class="list-group-item">
+          <div class="d-flex justify-content-between align-items-center">
+            <div>
+              <strong>{{ post.title }}</strong> by {{ post.user.name }}
+              <div class="text-muted small">🗨️ {{ post.commentCount }} comments</div>
+            </div>
+
+            <div class="btn-group">
+              <button class="btn btn-outline-primary btn-sm" (click)="goToPost(post.id)">View</button>
+              <button class="btn btn-outline-warning btn-sm" (click)="editPost(post.id)">Edit</button>
+              <button class="btn btn-outline-danger btn-sm" (click)="deletePost(post.id)">Delete</button>
+            </div>
+          </div>
+        </li>
+      }
+    </ul>
+  } @else {
+    <div class="alert alert-warning mt-3">No posts found.</div>
+  }
+</div>
